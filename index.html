@@ -2,222 +2,172 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arcana — Il tuo oracolo</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: #f3eaff;
-      font-family: Georgia, serif;
-      background:
-        radial-gradient(ellipse at top, #39204f 0%, #171020 55%, #09070e 100%);
-      text-align: center;
-    }
-
-    main { padding: 28px 16px 40px; }
-
-    h1 {
-      margin: 8px 0;
-      letter-spacing: 5px;
-      font-size: 30px;
-      color: #e5c9ff;
-    }
-
-    .subtitle {
-      color: #bda9ce;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-
-    #status {
-      color: #e0c7f5;
-      margin: 18px auto;
-      min-height: 42px;
-      line-height: 1.5;
-    }
-
-    #deck {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      max-width: 480px;
-      margin: 24px auto;
-    }
-
-    .card {
-      aspect-ratio: 2 / 3.3;
-      min-width: 0;
-      padding: 4px;
-      border: 1px solid #a98acb;
-      border-radius: 9px;
-      color: #f1dcff;
-      background: linear-gradient(145deg, #49275f, #1a1027 70%);
-      box-shadow: 0 3px 12px #0008;
-      cursor: pointer;
-      font-size: 23px;
-      touch-action: manipulation;
-    }
-
-    .card::before {
-      content: "";
-      display: block;
-      position: absolute;
-    }
-
-    .card span {
-      display: block;
-      font-size: 10px;
-      margin-top: 7px;
-      color: #c5a9dc;
-    }
-
-    .card.selected {
-      border: 2px solid #f4d98a;
-      background: linear-gradient(145deg, #76528e, #30203e);
-    }
-
-    .card:disabled {
-      opacity: 0.45;
-      cursor: default;
-    }
-
-    #next {
-      display: none;
-      padding: 13px 22px;
-      border: 1px solid #c9a6ed;
-      border-radius: 24px;
-      color: #fff;
-      background: #583773;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    #chosen {
-      max-width: 480px;
-      margin: 18px auto;
-      line-height: 1.6;
-      color: #ead8f8;
-    }
-
-    .note {
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      color: #aa98b8;
-      margin-top: 25px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arcana — Il tuo oracolo</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; color: #f4eaff;
+  font-family: Georgia, serif; text-align: center;
+  background: radial-gradient(ellipse at top, #48265f, #171020 55%, #09070e);
+}
+main { padding: 25px 16px 35px; max-width: 560px; margin: auto; }
+.moon { color: #d9c0ef; font-size: 28px; letter-spacing: 9px; }
+h1 { margin: 8px 0; letter-spacing: 7px; font-size: 30px; color: #ead6ff; }
+.subtitle { color: #c5aed9; font-size: 14px; margin-bottom: 25px; }
+#status { min-height: 44px; line-height: 1.5; color: #e6d2f5; }
+.counter { color: #bca3d0; font-size: 12px; margin: 12px; }
+.stage {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; margin: 15px auto;
+}
+.arrow {
+  border: 1px solid #8d70a8; border-radius: 50%;
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: #261833; color: #ead6ff; font-size: 20px;
+}
+.card {
+  width: min(57vw, 220px); aspect-ratio: 2 / 3.3;
+  border: 2px solid #c2a4df; border-radius: 13px;
+  padding: 9px; color: #f2e5ff;
+  background: linear-gradient(145deg, #59366f, #21132e 70%);
+  box-shadow: 0 0 22px #0009, inset 0 0 0 4px #392448;
+  cursor: pointer; position: relative;
+}
+.card-inner {
+  height: 100%; border: 1px solid #bda0d8; border-radius: 7px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 12px;
+  background: radial-gradient(ellipse, #49305c, #21142d);
+}
+.symbol { font-size: 46px; color: #e1c5f7; }
+.ornament { font-size: 13px; letter-spacing: 5px; color: #c7a8e0; }
+.card-label { font-size: 12px; color: #d9c1ec; }
+.card.selected { border-color: #f1d98b; box-shadow: 0 0 22px #d6b45a55; }
+.card.selected .card-inner { background: linear-gradient(145deg, #745187, #34203f); }
+button { font-family: inherit; cursor: pointer; }
+.arrow:disabled { opacity: .25; cursor: default; }
+#selectBtn, #next {
+  border: 1px solid #c5a2e5; border-radius: 25px;
+  padding: 12px 20px; color: white;
+  background: linear-gradient(120deg, #67417f, #39234c);
+  font-size: 14px; margin: 6px;
+}
+#next { display: none; background: #624c2c; border-color: #e3ca83; }
+#selectedList { min-height: 28px; color: #e2d0f2; font-size: 13px; line-height: 1.8; margin: 14px auto; }
+.note { font: 12px Arial, sans-serif; color: #a996b8; margin-top: 28px; }
+</style>
 </head>
 <body>
-  <main>
-    <div style="font-size:30px">☾ ✧ ☽</div>
-    <h1>ARCANA</h1>
-    <div class="subtitle">Il velo si solleva. La scelta è tua.</div>
+<main>
+  <div class="moon">☾ ✧ ☽</div>
+  <h1>ARCANA</h1>
+  <div class="subtitle">Il velo si solleva. La scelta è tua.</div>
+  <div id="status">Concentrati sulla tua domanda. Sfoglia il mazzo e scegli tre carte.</div>
+  <div class="counter" id="counter">Carta 1 di 78</div>
 
-    <div id="status">Concentrati sulla tua domanda e scegli una carta.</div>
-    <div id="deck"></div>
-    <div id="chosen"></div>
-    <button id="next">Conferma la mia scelta ✧</button>
+  <div class="stage">
+    <button class="arrow" id="prev" aria-label="Carta precedente">‹</button>
+    <button class="card" id="card" aria-label="Seleziona questa carta">
+      <div class="card-inner">
+        <div class="ornament">✧ · ☾ · ✧</div>
+        <div class="symbol">☾</div>
+        <div class="ornament">✦ ─ ✦ ─ ✦</div>
+        <div class="card-label">TOCCA PER SCEGLIERE</div>
+      </div>
+    </button>
+    <button class="arrow" id="nextCard" aria-label="Carta successiva">›</button>
+  </div>
 
-    <div class="note">78 carte · Un viaggio dentro di te</div>
-  </main>
+  <button id="selectBtn">Scegli questa carta ✧</button>
+  <div id="selectedList"></div>
+  <button id="next">Conferma la mia stesa ☾</button>
+  <div class="note">78 carte · Lascia parlare l'intuizione</div>
+</main>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
-    const majors = [
-      "Il Matto", "Il Bagatto", "La Papessa", "L'Imperatrice",
-      "L'Imperatore", "Il Papa", "Gli Amanti", "Il Carro",
-      "La Giustizia", "L'Eremita", "La Ruota della Fortuna",
-      "La Forza", "L'Appeso", "La Morte", "La Temperanza",
-      "Il Diavolo", "La Torre", "Le Stelle", "La Luna",
-      "Il Sole", "Il Giudizio", "Il Mondo"
-    ];
+const majors = [
+"Il Matto","Il Bagatto","La Papessa","L'Imperatrice","L'Imperatore",
+"Il Papa","Gli Amanti","Il Carro","La Giustizia","L'Eremita",
+"La Ruota della Fortuna","La Forza","L'Appeso","La Morte",
+"La Temperanza","Il Diavolo","La Torre","Le Stelle","La Luna",
+"Il Sole","Il Giudizio","Il Mondo"
+];
+const values = ["Asso","Due","Tre","Quattro","Cinque","Sei","Sette","Otto","Nove","Dieci","Fante","Cavaliere","Regina","Re"];
+const suits = ["Bastoni","Coppe","Spade","Denari"];
+let deck = [...majors, ...suits.flatMap(s => values.map(v => `${v} di ${s}`))];
+for (let i = deck.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [deck[i], deck[j]] = [deck[j], deck[i]];
+}
 
-    const values = [
-      "Asso", "Due", "Tre", "Quattro", "Cinque", "Sei",
-      "Sette", "Otto", "Nove", "Dieci", "Fante",
-      "Cavaliere", "Regina", "Re"
-    ];
+let current = 0;
+let selected = [];
+const maxCards = 3;
+const card = document.getElementById("card");
+const status = document.getElementById("status");
+const counter = document.getElementById("counter");
+const selectBtn = document.getElementById("selectBtn");
+const next = document.getElementById("next");
+const selectedList = document.getElementById("selectedList");
 
-    const suits = ["Bastoni", "Coppe", "Spade", "Denari"];
+function render() {
+  counter.textContent = `Carta ${current + 1} di ${deck.length}`;
+  document.getElementById("prev").disabled = current === 0;
+  document.getElementById("nextCard").disabled = current === deck.length - 1;
 
-    let deck = [
-      ...majors,
-      ...suits.flatMap(suit => values.map(value => `${value} di ${suit}`))
-    ];
+  const chosen = selected.find(item => item.index === current);
+  card.classList.toggle("selected", Boolean(chosen));
+  card.querySelector(".symbol").textContent = chosen ? "✧" : "☾";
+  card.querySelector(".card-label").textContent = chosen
+    ? `SCELTA ${selected.findIndex(item => item.index === current) + 1}`
+    : "TOCCA PER SCEGLIERE";
+  selectBtn.textContent = chosen ? "Togli dalla stesa" : "Scegli questa carta ✧";
+  selectBtn.disabled = selected.length >= maxCards && !chosen;
+  selectBtn.style.opacity = selectBtn.disabled ? ".4" : "1";
+  selectedList.textContent = selected.length
+    ? `Le tue scelte: ${selected.length} di ${maxCards}`
+    : "";
+  next.style.display = selected.length === maxCards ? "inline-block" : "none";
+  if (selected.length === maxCards) status.textContent = "La stesa è pronta. Conferma quando vuoi.";
+  else status.textContent = "Sfoglia il mazzo e scegli le carte che ti attirano.";
+}
 
-    deck = deck.sort(() => Math.random() - 0.5);
-
-    let selected = [];
-    const maxCards = 3;
-
-    const deckElement = document.getElementById("deck");
-    const status = document.getElementById("status");
-    const chosen = document.getElementById("chosen");
-    const next = document.getElementById("next");
-
-    function renderDeck() {
-      deckElement.innerHTML = "";
-
-      deck.forEach((card, index) => {
-        const button = document.createElement("button");
-        button.className = "card";
-        button.setAttribute("aria-label", `Carta ${index + 1}`);
-
-        const isSelected = selected.some(item => item.index === index);
-        button.classList.toggle("selected", isSelected);
-        button.disabled = selected.length >= maxCards && !isSelected;
-
-        button.innerHTML = isSelected
-          ? `✧<span>Scelta ${selected.findIndex(item => item.index === index) + 1}</span>`
-          : `☾<span>Arcano</span>`;
-
-        button.addEventListener("click", () => {
-          if (isSelected) {
-            selected = selected.filter(item => item.index !== index);
-          } else if (selected.length < maxCards) {
-            selected.push({
-              index,
-              name: card,
-              orientation: Math.random() < 0.5 ? "dritta" : "rovesciata"
-            });
-          }
-
-          chosen.textContent = selected.length
-            ? `Carte scelte: ${selected.length} di ${maxCards}`
-            : "";
-
-          status.textContent = selected.length === maxCards
-            ? "Le carte ti hanno scelta. Puoi confermare."
-            : "Scegli le carte che ti attirano.";
-
-          next.style.display = selected.length === maxCards ? "inline-block" : "none";
-          renderDeck();
-        });
-
-        deckElement.appendChild(button);
-      });
-    }
-
-    next.addEventListener("click", () => {
-      const result = selected.map(item => ({
-        carta: item.name,
-        orientamento: item.orientation
-      }));
-
-      tg.sendData(JSON.stringify(result));
-      status.textContent = "La tua scelta è stata affidata ad Arcana. 🌙";
-      next.style.display = "none";
+function toggleCard() {
+  const existing = selected.find(item => item.index === current);
+  if (existing) {
+    selected = selected.filter(item => item.index !== current);
+  } else if (selected.length < maxCards) {
+    selected.push({
+      index: current,
+      name: deck[current],
+      orientation: Math.random() < 0.5 ? "dritta" : "rovesciata"
     });
+  }
+  render();
+}
 
-    renderDeck();
-  </script>
+document.getElementById("prev").addEventListener("click", () => { current--; render(); });
+document.getElementById("nextCard").addEventListener("click", () => { current++; render(); });
+card.addEventListener("click", toggleCard);
+selectBtn.addEventListener("click", toggleCard);
+
+next.addEventListener("click", () => {
+  const result = selected.map(item => ({
+    carta: item.name, orientamento: item.orientation
+  }));
+  tg.sendData(JSON.stringify(result));
+  status.textContent = "La tua scelta è stata affidata ad Arcana. ☾";
+  next.style.display = "none";
+});
+
+render();
+</script>
 </body>
 </html>
